@@ -29,8 +29,13 @@ function purchaseInquiry(){
 			if (err) throw err;
 			if (res[0].stock_quantity >= input.quantity) {
 				connection.query("UPDATE products SET stock_quantity = ? WHERE item_id =?", [(res[0].stock_quantity)-(input.quantity), input.itemNumber], function(err,response) {
+					if (err) throw err;
 					showInventory();
 					amountSpent =  input.quantity*res[0].price;
+					connection.query("UPDATE products SET product_sales = ? WHERE item_id =?", [(res[0].product_sales)-(-amountSpent), input.itemNumber], function(err,response) {
+						if (err) throw err;
+					});
+					console.log("Your puchase total is : $" + amountSpent + ".");
 				});
 			} else {
 				console.log("Insufficient quantity in stock!");
